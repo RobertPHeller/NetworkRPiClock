@@ -491,6 +491,7 @@ Httpd_Server [array get opts]
 
 
 puts stderr "Accepting connections on http://$Httpd(-host):$Httpd(-port)/"
+set httpClicks [clock seconds]
 
 if {![info exists tcl_service]} {
     vwait forever		;# start the Tcl event loop
