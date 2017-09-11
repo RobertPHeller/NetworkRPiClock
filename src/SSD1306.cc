@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sat Sep 9 15:25:34 2017
-//  Last Modified : <170909.1659>
+//  Last Modified : <170911.1050>
 //
 //  Description	
 //
@@ -58,6 +58,9 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+
+// Heavily copied from wiringPiI2C and Adafruit's SSD1306.py.
+
 static inline int i2c_smbus_access (int fd, char rw, uint8_t command, int size, union i2c_smbus_data *data)
 {
     struct i2c_smbus_ioctl_data args ;

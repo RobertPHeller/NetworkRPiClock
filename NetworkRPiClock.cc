@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <170910.1000>
+//  Last Modified : <170911.1106>
 //
 //  Description	
 //
@@ -133,6 +133,41 @@ static const char rcsid[] = "@(#) : $Id$";
  * the days meetings, appointments, and daily to-do items.  The up and down
  * positions scroll through the available daily items.  Pressing straight in
  * toggles between clock and item display modes.
+ * 
+ * This program also accesses a web application server to get calendar 
+ * infomation.  It expects to get an XML body formatted much like this:
+ * 
+ * @verbatim
+  <?xml version="1.0" ?>
+  <calendar>
+    <days>N Days</days>
+    <item>
+      <date>MM/DD/YYYY</date>
+      <starttime>HH:MM</starttime>
+      <text>Some text</text>
+    </item>
+    <item>
+      <date>MM/DD/YYYY</date>
+      <text>Some text</text>
+    </item>
+    ...
+   </calendar>
+  @endverbatim
+ * 
+ * The days tag provides the number of days worth of items.
+ * 
+ * Each item tag contains one calendar item.  Each item has a date and a body 
+ * of text.  It might have an optional starttime.  If the starttime is not
+ * present, it is presumed that the item is an all day event or a todo item
+ * (eg something I need to do on or before that date).  If the starttime is
+ * present, the item is presumed to be some activity (meeting, appointment, 
+ * etc.) that starts at the specificed time.  I have written a simple web
+ * server application that works with Sanjay Ghemawat's ical program, but it
+ * should be easy enough to write such a server for other calendar systems.
+ * The server only needs to implement the GET protocol and needs to be able
+ * to take one CGI parameter: days=N (number of days in advance to collect 
+ * items for).  A very simple minded HTTP server will work just fine.
+ * 
  * 
  * @section OPTIONS OPTIONS
  * 

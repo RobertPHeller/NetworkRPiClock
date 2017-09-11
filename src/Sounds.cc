@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Sep 6 17:19:29 2017
-//  Last Modified : <170907.0921>
+//  Last Modified : <170911.1048>
 //
 //  Description	
 //
@@ -57,21 +57,25 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <strings.h>
 #include <stdint.h>
 
-
+// Alert sound file map.
 AlertSoundFileMap AlertSound::soundFileMap;
 
+// Initialize the Alert sound file map.
 void AlertSound::InitializeAlertSoundFileMap(std::string soundPath) {
     soundFileMap[ToDoToday] = soundPath + "/ToDoToday.wav";
     soundFileMap[EventToDay] = soundPath + "/EventToDay.wav";
     soundFileMap[EventSoon] = soundPath + "/EventSoon.wav";
 }
 
+// Create an AlertSound instance.
 AlertSound::AlertSound(AlertType alert) {
     alertSoundFile = soundFileMap[alert];
 }
 
+// Default sound device.
 #define SoundDevice "plughw:0,0"
 
+// Convert bytes to frames.
 #define bytestoframes(bytes) ((bytes) / (format_chunk.NumChannels * (format_chunk.BitsPerSample/8)))
 
 /*
@@ -99,6 +103,8 @@ static int xrun_recovery(snd_pcm_t *handle, int err)
 }
 
 
+
+// Play a sound. 
 void AlertSound::Play() {
     snd_pcm_t *handle;
     snd_pcm_hw_params_t *hwparams;
