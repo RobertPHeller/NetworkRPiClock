@@ -1,0 +1,17 @@
+I wanted to have a clock in my bedroom and wanted to also have a way of 
+knowing what I needed to do during the day when I get up in the morning.  I 
+have been using an old Tcl/Tk program named ical written by Sanjay Ghemawat
+to manage my appointments, meetings, and todo list.  I adapted one of the 
+utilites that comes with ical, along with a simple web server module that is
+part of SDX to create a simple REST web app to serve calendar items in my
+ical database.  I then devised the idea of using a Raspberry Pi with 
+Adafruit's OLed 128x64 "Bonnet" to implement a network clock.  It would
+normally just display the time, using a software implemented 7-segment 
+display, but will also be able to display my appointments, meetings, and 
+daily todo list, using the joystick on the Bonnet.  I also added a speaker
+so the Raspberry Pi can provide audio "warnings" of things like upcoming
+meetings and appointments.
+
+Robert Heller
+heller@deepsoft.com
+
