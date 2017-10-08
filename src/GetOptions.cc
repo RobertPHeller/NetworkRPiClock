@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 17:16:49 2017
-//  Last Modified : <170910.1658>
+//  Last Modified : <170912.1256>
 //
 //  Description	
 //
@@ -72,6 +72,7 @@ static const char rcsid[] = "@(#) : $Id$";
 
 // Initialize the long options structure.
 const struct option GetOptions::longoptions[] = {
+    {"background",no_argument, 0, 'b'},
     {"soundlib", required_argument, 0, 's'},
     {"url", required_argument, 0, 'u'},
     {"days", required_argument, 0, 'd'},
@@ -80,7 +81,7 @@ const struct option GetOptions::longoptions[] = {
 };
 
 // Initialize the short options string.
-const char GetOptions::optstring[] = "s:u:d:h";
+const char GetOptions::optstring[] = "s:u:d:hb";
 
 GetOptions::GetOptions(int argc, char * const argv[]) {
     int c;
@@ -90,6 +91,7 @@ GetOptions::GetOptions(int argc, char * const argv[]) {
     // Initialize the options to their default values.
     baseURL = BASEURL;   // Defined in config.h from configure.ac
     soundLib = SOUNDLIB; // Defined in config.h from configure.ac
+    background = false;
     days = 1;
     help = false;
     parseerror = false;
@@ -105,6 +107,9 @@ GetOptions::GetOptions(int argc, char * const argv[]) {
         if (c == -1) break;
         // Branch out over the option letter.
         switch (c) {
+        case 'b': // --background, -b
+            background = true;
+            break;
         case 's': // --soundlib, -s
             soundLib = optarg;
             break;
@@ -153,6 +158,7 @@ void GetOptions::Usage(const char *program) const {
     std::cerr /*<< " logfile"*/ << std::endl;
     std::cerr << std::endl;
     std::cerr << "Where: " << std::endl;
+    std::cerr << "    --background, -b  Fade into the background: fork() and close channels 0, 1, 2, and disconnect from the controlling tty (if any)." << std::endl;
     std::cerr << "    --soundlib, -s    The directory where the sound WAV files are." << std::endl;
     std::cerr << "    --url, -u         The base URL to use." << std::endl;
     std::cerr << "    --days, -d        The number of days of advanced notice (default: 1)." << std::endl;

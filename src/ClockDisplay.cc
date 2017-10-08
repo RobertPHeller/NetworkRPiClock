@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Thu Sep 7 10:23:25 2017
-//  Last Modified : <170910.1554>
+//  Last Modified : <171008.0841>
 //
 //  Description	
 //
@@ -71,7 +71,7 @@ digitBitmapMap ClockDisplay::digitBitmaps[] = {
 
 
 
-void ClockDisplay::DisplayTime(int hours, int minutes) {
+void ClockDisplay::DisplayTime(int hours, int minutes, bool muteflag) {
     // Computer each of the digits.
     int hHigh = hours / 10;
     int hLow  = hours % 10;
@@ -98,6 +98,8 @@ void ClockDisplay::DisplayTime(int hours, int minutes) {
     drawdigit(mHigh,64);
     // Display low minute digit.
     drawdigit(mLow,96);
+    // Display mute flag
+    if (muteflag) drawmute();
 }
 
 void ClockDisplay::drawdigit(int v, int xoff) {
@@ -154,6 +156,26 @@ void ClockDisplay::drawbitmap(unsigned char *bits,int w,int h,int xoff) {
                 rbyte[(ibc/8)+1] |= byte1;
             }
 
+        }
+    }
+}
+
+
+void ClockDisplay::drawmute() {
+    int xx, yy, sx, xbyte, sy;
+    // Fetch Cairo image parameters.
+    int height = cairo_image_surface_get_height(surface);
+    int width  = cairo_image_surface_get_width(surface);
+    int stride = cairo_image_surface_get_stride(surface);
+    unsigned char *imgbits = cairo_image_surface_get_data(surface);
+    sy = height - MUTESIZE;
+    for (yy = sy; yy < height; yy++) {
+        sx = width - (yy-sy+1);
+        for (xx = sx; xx < width; xx++) {
+            int byteoff = xx / 8;
+            int bitoff  = xx % 8;
+            unsigned char *rbyte = &imgbits[(stride*yy)+byteoff];
+            *rbyte |= (1 << bitoff);
         }
     }
 }

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 17:14:44 2017
-//  Last Modified : <170910.1636>
+//  Last Modified : <170912.1244>
 //
 //  Description	
 //
@@ -90,6 +90,8 @@ private:
     std::string soundLib;
     /** The help option value. */
     bool help;
+    /** The background flag. */
+    bool background;
     /** Parse error flag. */
     bool parseerror;
 protected:
@@ -120,6 +122,10 @@ public:
      * @returns the help option value.
      */
     bool Help() const {return help;} 
+    /** Method to return the background option.
+     * @returns the background option value.
+     */
+    bool Background() const {return background;}
     /** @returns the parse error flag.
      */
     bool ParseError() const {return parseerror;}

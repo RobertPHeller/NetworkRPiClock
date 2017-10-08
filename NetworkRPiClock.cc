@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <170911.1106>
+//  Last Modified : <171008.0848>
 //
 //  Description	
 //
@@ -69,6 +69,14 @@ static const char rcsid[] = "@(#) : $Id$";
 
 #include <iostream>
 #include <iomanip>
+#include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <signal.h>
+
 
 /**
  * @mainpage Preface
@@ -127,7 +135,7 @@ static const char rcsid[] = "@(#) : $Id$";
  * This program, run as a daemon on the 'Pi, implements the clock.  It 
  * displays the current time (hours and minutes) on the Adafruit OLed 128x64 
  * "Bonnet", using a software implementation of a 7-segment display, simulating
- * the familar display of digital clocks.  It also using the light sensor to
+ * the familar display of digital clocks.  It also uses a light sensor to
  * enable or disable the audio alerts -- the alerts are only produced when the
  * room lights are on.  Also the joystick is used to control the display of
  * the days meetings, appointments, and daily to-do items.  The up and down
@@ -231,6 +239,8 @@ int main(int argc, char *argv[]) {
     time_t now;
     struct tm tm_now;
     char buffer[256];
+    bool MuteSpeaker = true;
+    
     
     const struct timespec nsleep = {0,100000000};
     LIBXML_TEST_VERSION
@@ -244,6 +254,39 @@ int main(int argc, char *argv[]) {
         ProgramOptions.Usage(argv[0]);
         return 1;
     }                                
+    if (ProgramOptions.Background()) {
+        int pid = fork();
+        if (pid != 0) {
+            exit(errno);
+        }
+        int fd;
+        for (fd = 0; fd < 100; fd++)
+            close(fd); /* close all file descriptors */
+        // Reopen stdin to be /dev/null
+        open("/dev/null",O_RDONLY);
+        // Reopen stdout to be /dev/null
+        open("/dev/null",O_WRONLY);
+        // Reopen stderr to be the log file
+        open("/home/heller/NetworkRPiClock.log",O_WRONLY|O_CREAT|O_APPEND,S_IRUSR|S_IWUSR);
+#ifdef SIGTTOU
+        signal(SIGTTOU, SIG_IGN);
+#endif
+        
+#ifdef SIGTTIN
+        signal(SIGTTIN, SIG_IGN);
+#endif
+        
+#ifdef SIGTSTP
+        signal(SIGTSTP, SIG_IGN);
+#endif
+        if ((fd = open("/dev/tty", O_RDWR)) >= 0) {
+            ioctl(fd, TIOCNOTTY, 0); /* lose controlling terminal */
+            close(fd);
+            
+        }
+        setpgrp();
+    }
+    
     
     AlertSound::InitializeAlertSoundFileMap(ProgramOptions.SoundLib());
     AlertSound todotoday(ToDoToday);
@@ -256,13 +299,14 @@ int main(int argc, char *argv[]) {
     Button Down(D_pin);
     Button AButton(A_pin);
     Button BButton(B_pin);
-    LightSensor Light;
+    //LightSensor Light;
     enum {DisplayClock, DisplayItem} mode;
 
     std::string URL = ProgramOptions.BaseURL();
     URL += "?days=";
     snprintf(buffer,sizeof(buffer),"%d",ProgramOptions.Days());
     URL += buffer;
+    //std::cerr << "*** main(): URL is "<<URL<<std::endl;
     ItemList *iList = NULL;
     DateVector::const_iterator curitem;
     bool havevaliditem = false;
@@ -271,13 +315,20 @@ int main(int argc, char *argv[]) {
     mode = DisplayClock;
     SSD1306 OLed(128,64);
     OLed.begin();
+    OLed.clear();
+    time(&now);
+    localtime_r(&now,&tm_now);
+    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker);
+    OLed.WriteDisplay(display);
+    std::cerr << tm_now.tm_mon+1 << "/" << tm_now.tm_mday << "/" << (tm_now.tm_year+1900) << " " << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << " NetworkRPiClock Started." << std::endl;
     while (true) {
         time(&now);
         localtime_r(&now,&tm_now);
         if (tm_now.tm_sec == 0) {
+            std::cerr << tm_now.tm_mon+1 << "/" << tm_now.tm_mday << "/" << (tm_now.tm_year+1900) << " " << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << " NetworkRPiClock Heartbeat." << std::endl;
             if (!havevaliditem) mode = DisplayClock;
             if (mode == DisplayClock) {
-                clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min);
+                clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker);
             } else {
                 curitem->DisplayDate(display);
             }
@@ -286,14 +337,16 @@ int main(int argc, char *argv[]) {
             //std::cout << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << std::endl;
             if ((tm_now.tm_min % 5) == 0) {
                 RestClient::Response r = RestClient::get(URL);
+                //std::cerr << "*** main(), r.code == " << r.code << std::endl;
                 if (r.code == 200) {
                     if (iList != NULL) {
                         delete iList;
                         iList = NULL;
                     }
+                    //std::cerr << "*** main(), r.body == '"<< r.body << "'" << std::endl;
                     iList = new ItemList(r.body);
                     havevaliditem = false;
-                    if (Light.DaytimeP()) {
+                    if (!MuteSpeaker) {
                         for (DateVector::const_iterator item = iList->begin();
                              item != iList->end();
                              item++) {
@@ -321,8 +374,15 @@ int main(int argc, char *argv[]) {
         }
         nanosleep(&nsleep,NULL);
         if (iList != NULL) {
+            //std::cerr << "*** main(): iList != NULL" <<std::endl;
             bool update = false;
-            if (Up.Pushed()) {
+            if (AButton.Pushed()) {
+                MuteSpeaker = true;
+                update = true;
+            } else if (BButton.Pushed()) {
+                MuteSpeaker = false;
+                update = true;
+            } else if (Up.Pushed()) {
                 if (!havevaliditem) {
                     curitem = iList->begin();
                     havevaliditem = (curitem != iList->end());
@@ -372,7 +432,7 @@ int main(int argc, char *argv[]) {
             }
             if (update) {
                 if (mode == DisplayClock) {
-                    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min);
+                    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker);
                 } else {
                     curitem->DisplayDate(display);
                 }

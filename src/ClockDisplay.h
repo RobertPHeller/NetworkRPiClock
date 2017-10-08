@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Thu Sep 7 10:17:48 2017
-//  Last Modified : <170910.1535>
+//  Last Modified : <171008.0841>
 //
 //  Description	
 //
@@ -71,6 +71,8 @@ typedef struct {
     int  height; 
 } digitBitmapMap;
 
+#define MUTESIZE 4
+
 /** @brief Class to display the time as a "traditional" 7-Segment display. */
 class ClockDisplay {
 private:
@@ -95,6 +97,9 @@ private:
      * @param xoff the X Offset to draw the bitmap.
      */
     void drawbitmap(unsigned char *bits,int w,int h,int xoff);
+    /** @brief draw mute flag.
+     */
+    void drawmute();
     /** The "traditional" 7-Segment lookup table. */
     static digitBitmapMap digitBitmaps[10];
 protected:
@@ -114,7 +119,7 @@ public:
      * @param hours The hours to display.
      * @param minutes The minutes to display.
      */
-    void DisplayTime(int hours, int minutes);
+    void DisplayTime(int hours, int minutes, bool muteflag);
 };
 
 #endif // __CLOCKDISPLAY_H

@@ -1,20 +1,20 @@
 #!/bin/bash
-# Buttons on OLed board
-echo 27 >/sys/class/gpio/export;# L_pin
-echo in >/sys/class/gpio/gpio27/direction
-echo 23 >/sys/class/gpio/export;# R_pin
-echo in >/sys/class/gpio/gpio23/direction
-echo  4 >/sys/class/gpio/export;#  C_pin
-echo in >/sys/class/gpio/gpio4/direction
-echo 17 >/sys/class/gpio/export;# U_pin
-echo in >/sys/class/gpio/gpio17/direction
-echo 22 >/sys/class/gpio/export;# D_pin
-echo in >/sys/class/gpio/gpio22/direction
-echo 5 >/sys/class/gpio/export;#  A_pin
-echo in >/sys/class/gpio/gpio5/direction
-echo 6 >/sys/class/gpio/export;#  B_pin
-echo in >/sys/class/gpio/gpio6/direction
+# Buttons on OLed board -- needs wiringPi installed
+gpio mode 2 up
+gpio export 27 in;# L_pin
+gpio mode 4 up
+gpio export 23 in;# R_pin
+gpio mode 7 up
+gpio export 4 in;#  C_pin
+gpio mode 0 up
+gpio export 17 in;# U_pin
+gpio mode 3 up
+gpio export 22 in;# D_pin
+gpio mode 21 up
+gpio export 5 in;#  A_pin
+gpio mode 22 up
+gpio export 6 in;#  B_pin
 #
 # Light sensor on PermaPro HAT
-echo 21 >/sys/class/gpio/export;# Photo Transistor
-echo in >/sys/class/gpio/gpio21/direction
+gpio mode 29 up
+gpio export 21 in;# Photo Transistor
