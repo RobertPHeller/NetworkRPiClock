@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <171008.0848>
+//  Last Modified : <180908.0953>
 //
 //  Description	
 //
@@ -179,6 +179,7 @@ static const char rcsid[] = "@(#) : $Id$";
  * 
  * @section OPTIONS OPTIONS
  * 
+ * - --background, -b  Run the program as a daemon and fade into the background.
  * - --soundlib, -s    The directory where the sound WAV files are stored.
  * - --url, -u         The base URL to use.
  * - --days, -d        The number of days of advanced notice (default: 1).
@@ -299,7 +300,7 @@ int main(int argc, char *argv[]) {
     Button Down(D_pin);
     Button AButton(A_pin);
     Button BButton(B_pin);
-    //LightSensor Light;
+    LightSensor Light;
     enum {DisplayClock, DisplayItem} mode;
 
     std::string URL = ProgramOptions.BaseURL();
@@ -308,6 +309,7 @@ int main(int argc, char *argv[]) {
     URL += buffer;
     //std::cerr << "*** main(): URL is "<<URL<<std::endl;
     ItemList *iList = NULL;
+    DateVector AckedDates;
     DateVector::const_iterator curitem;
     bool havevaliditem = false;
     cairo_surface_t *display = cairo_image_surface_create(CAIRO_FORMAT_A1,128,64);
@@ -336,8 +338,10 @@ int main(int argc, char *argv[]) {
             //PrintDisplay(display);
             //std::cout << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << std::endl;
             if ((tm_now.tm_min % 5) == 0) {
+                if (tm_now.tm_min == 0) FlushOldDates(&tm_now,AckedDates);
+                std::cerr << "*** main(): Top of 5 min loop, after FlushOldDates(): AckedDates now has " << AckedDates.size() << " items" << std::endl;
                 RestClient::Response r = RestClient::get(URL);
-                //std::cerr << "*** main(), r.code == " << r.code << std::endl;
+                std::cerr << "*** main(), r.code == " << r.code << std::endl;
                 if (r.code == 200) {
                     if (iList != NULL) {
                         delete iList;
@@ -345,8 +349,9 @@ int main(int argc, char *argv[]) {
                     }
                     //std::cerr << "*** main(), r.body == '"<< r.body << "'" << std::endl;
                     iList = new ItemList(r.body);
+                    std::cerr << "*** main(): iList has " << iList->ItemCount() << " items" << std::endl;
                     havevaliditem = false;
-                    if (!MuteSpeaker) {
+                    if (Light.DaytimeP() && !MuteSpeaker) {
                         for (DateVector::const_iterator item = iList->begin();
                              item != iList->end();
                              item++) {
@@ -359,11 +364,15 @@ int main(int argc, char *argv[]) {
                                     int minutesremain = stime - now_minutes;
                                     if (minutesremain > 0 && minutesremain <= 15) {
                                         eventsoon.Play();
-                                    } else {
-                                        eventtoday.Play();
+                                    } else if (minutesremain > 0) {
+                                        if (!FindDate(item,AckedDates)) {
+                                            eventtoday.Play();
+                                        }
                                     }
                                 } else {
-                                    todotoday.Play();
+                                    if (!FindDate(item,AckedDates)) {
+                                        todotoday.Play();
+                                    }
                                 }
                             }
                         }
@@ -429,6 +438,12 @@ int main(int argc, char *argv[]) {
                     mode = DisplayItem;
                 }
                 update = true;
+            } else if (Left.Pushed() || Right.Pushed()) {
+                if (havevaliditem) {
+                    AckedDates.push_back(*curitem);
+                    std::cerr << "*** main(): Left/Right pushed: item copied: " << (std::string)*curitem << std::endl;
+                    std::cerr << "*** main(): Left/Right pushed: AckedDates now has " << AckedDates.size() << " items" << std::endl;
+                }
             }
             if (update) {
                 if (mode == DisplayClock) {

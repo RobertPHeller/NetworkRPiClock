@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 17:14:44 2017
-//  Last Modified : <170912.1244>
+//  Last Modified : <180908.0823>
 //
 //  Description	
 //
@@ -69,6 +69,7 @@
  * 
  * The options processed are:
  * 
+ * - --background, -b  Run the program as a daemon and fade into the background.
  * - --soundlib, -s    The directory where the sound WAV files are.
  * - --url, -u         The base URL to use.
  * - --days, -d        The number of days of advanced notice (default: 1).

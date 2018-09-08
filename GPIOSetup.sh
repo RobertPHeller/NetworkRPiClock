@@ -16,5 +16,5 @@ gpio mode 22 up
 gpio export 6 in;#  B_pin
 #
 # Light sensor on PermaPro HAT
-gpio mode 29 up
+gpio mode 29 tri
 gpio export 21 in;# Photo Transistor

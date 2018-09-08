@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Sep 6 12:08:17 2017
-//  Last Modified : <170910.1930>
+//  Last Modified : <180908.0946>
 //
 //  Description	
 //
@@ -45,6 +45,10 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef HAVE_TIME_H
+#include <time.h>
 #endif
 
 #include <cairo.h>
@@ -84,10 +88,54 @@ struct Date {
      * display.
      */
     void DisplayDate(cairo_surface_t *surface) const;
+    operator std::string() const
+    {
+        char buffer[256];
+        if (hasstarttime) {
+            snprintf(buffer,sizeof(buffer),"%d/%d/%d %2d:%02d",month,date,year,starthour,startminute);
+        } else {
+            snprintf(buffer,sizeof(buffer),"%d/%d/%d",month,date,year);
+        }
+        return std::string(buffer)+" "+text;
+    }
+    bool operator ==(const Date &other) const
+    {
+        //fprintf(stderr,"*** %s == %s\n",((std::string)*this).c_str(),((std::string)other).c_str());
+        if (year == other.year &&
+            month == other.month &&
+            date == other.date) {
+            //fprintf(stderr,"*** operator ==(): Date match: %s and %s\n",((std::string)*this).c_str(),((std::string)other).c_str());
+            bool timematch = false; 
+            if (hasstarttime && other.hasstarttime) {
+                if (starthour == other.starthour &&
+                    startminute == other.startminute) {
+                    timematch = true;
+                    //fprintf(stderr,"*** operator ==(): Time match: %s and %s\n",((std::string)*this).c_str(),((std::string)other).c_str());
+                }
+            } else {
+                timematch = true;
+                //fprintf(stderr,"*** operator ==(): Time match: %s and %s\n",((std::string)*this).c_str(),((std::string)other).c_str());
+            }
+            if (timematch && text == other.text) {
+                //fprintf(stderr,"*** operator ==(): Text match: %s and %s\n",((std::string)*this).c_str(),((std::string)other).c_str());
+                return true;
+            }
+        }
+        return false;
+    }
+    bool ExpiredP(const struct tm *tm_now) const
+    {
+        return (year < (tm_now->tm_year+1900)) ||
+              (month < (tm_now->tm_mon+1)) ||
+              (date < tm_now->tm_mday);
+    }
 };
 
 /** A vector of dates. */
 typedef std::vector<Date> DateVector;
+
+void FlushOldDates(struct tm *tm_now,DateVector dates);
+bool FindDate(DateVector::const_iterator item,const DateVector dates);
 
 /** @brief Class to hold a collection of dates returned from the ical server.
  *

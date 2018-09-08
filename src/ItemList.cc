@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Sep 6 12:25:33 2017
-//  Last Modified : <170910.1925>
+//  Last Modified : <180908.0947>
 //
 //  Description	
 //
@@ -195,3 +195,35 @@ void Date::DisplayDate(cairo_surface_t *surface) const {
     g_object_unref (layout);
     cairo_destroy (context);
 }
+
+
+
+void FlushOldDates(struct tm *tm_now,DateVector dates)
+{
+    for (DateVector::iterator i = dates.begin(); i != dates.end(); i++)
+    {
+        if (i->ExpiredP(tm_now)) {
+            fprintf(stderr,"*** FlushOldDates(): deleting: %s\n",((std::string)*i).c_str());
+            dates.erase(i);
+            i = dates.begin();
+            continue;
+        }
+    }
+}
+
+bool FindDate(DateVector::const_iterator item,const DateVector dates)
+{
+    //fprintf(stderr,"*** FindDate(): item is %s\n",((std::string)*item).c_str());
+    for (DateVector::const_iterator i = dates.begin(); i != dates.end(); i++)
+    {
+        fprintf(stderr,"*** FindDate(): Checking: %s\n",((std::string)*i).c_str());
+        if (*item == *i) {
+            //fprintf(stderr,"*** FindDate(): Found: %s\n",((std::string)*i).c_str());
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
