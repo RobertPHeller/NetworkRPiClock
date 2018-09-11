@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Sep 6 12:25:33 2017
-//  Last Modified : <180911.0907>
+//  Last Modified : <180911.1142>
 //
 //  Description	
 //
@@ -198,23 +198,28 @@ void Date::DisplayDate(cairo_surface_t *surface) const {
 
 
 
-void FlushOldDates(struct tm *tm_now,DateVector dates)
+void FlushOldDates(struct tm *tm_now,DateVector &dates)
 {
-    bool done = true;
-    do {
+    bool done = false;
+    //fprintf(stderr,"*** FlushOldDates(): tm_now->year = %d, tm_now->tm_mon = %d, tm_now->tm_mday = %d, dates.size() = %d\n",
+    //        tm_now->tm_year,tm_now->tm_mon,tm_now->tm_mday,dates.size());
+    while (!done) {
+        done = true;
+        //fprintf(stderr,"*** FlushOldDates(): top of while loop: dates has %d items\n",dates.size());
         for (DateVector::iterator i = dates.begin(); i != dates.end(); i++)
         {
+            //fprintf(stderr,"*** FlushOldDates(): Checking: %s\n",((std::string)*i).c_str());
             if (i->ExpiredP(tm_now)) {
-                fprintf(stderr,"*** FlushOldDates(): deleting: %s\n",((std::string)*i).c_str());
+                //fprintf(stderr,"*** FlushOldDates(): deleting: %s\n",((std::string)*i).c_str());
                 dates.erase(i);
                 done = false;
                 break;
             }
         }
-    } while (!done);
+    }
 }
 
-bool FindDate(DateVector::const_iterator item,const DateVector dates)
+bool FindDate(DateVector::const_iterator item,const DateVector &dates)
 {
     //fprintf(stderr,"*** FindDate(): item is %s\n",((std::string)*item).c_str());
     for (DateVector::const_iterator i = dates.begin(); i != dates.end(); i++)

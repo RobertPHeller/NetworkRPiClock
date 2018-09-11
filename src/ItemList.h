@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Sep 6 12:08:17 2017
-//  Last Modified : <180908.0946>
+//  Last Modified : <180911.1138>
 //
 //  Description	
 //
@@ -134,8 +134,8 @@ struct Date {
 /** A vector of dates. */
 typedef std::vector<Date> DateVector;
 
-void FlushOldDates(struct tm *tm_now,DateVector dates);
-bool FindDate(DateVector::const_iterator item,const DateVector dates);
+void FlushOldDates(struct tm *tm_now,DateVector &dates);
+bool FindDate(DateVector::const_iterator item,const DateVector &dates);
 
 /** @brief Class to hold a collection of dates returned from the ical server.
  *

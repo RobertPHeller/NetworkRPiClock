@@ -23,7 +23,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Sep 5 15:29:32 2017
-#  Last Modified : <170910.0905>
+#  Last Modified : <180911.1127>
 #
 #  Description	
 #
@@ -124,6 +124,7 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 bin_PROGRAMS = NetworkRPiClock$(EXEEXT)
+noinst_PROGRAMS = Libtest$(EXEEXT)
 subdir = .
 DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
@@ -145,18 +146,22 @@ CONFIG_CLEAN_FILES = Doxyfile
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" \
 	"$(DESTDIR)$(man8dir)" "$(DESTDIR)$(pkgdatadir)"
-PROGRAMS = $(bin_PROGRAMS)
-am_NetworkRPiClock_OBJECTS = NetworkRPiClock.$(OBJEXT)
-NetworkRPiClock_OBJECTS = $(am_NetworkRPiClock_OBJECTS)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
+am_Libtest_OBJECTS = Libtest.$(OBJEXT)
+Libtest_OBJECTS = $(am_Libtest_OBJECTS)
 am__DEPENDENCIES_1 =
-NetworkRPiClock_DEPENDENCIES = src/librpinetclock.a \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	restclient-cpp/.libs/librestclient-cpp.a
+Libtest_DEPENDENCIES = src/librpinetclock.a $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_NetworkRPiClock_OBJECTS = NetworkRPiClock.$(OBJEXT)
+NetworkRPiClock_OBJECTS = $(am_NetworkRPiClock_OBJECTS)
+NetworkRPiClock_DEPENDENCIES = src/librpinetclock.a \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	restclient-cpp/.libs/librestclient-cpp.a
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -219,8 +224,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(NetworkRPiClock_SOURCES)
-DIST_SOURCES = $(NetworkRPiClock_SOURCES)
+SOURCES = $(Libtest_SOURCES) $(NetworkRPiClock_SOURCES)
+DIST_SOURCES = $(Libtest_SOURCES) $(NetworkRPiClock_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -464,14 +469,19 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src -I. -I./src \
 	$(ALSA_CFLAGS)
 
 sbin_SCRIPTS = GPIOReset.sh  GPIOSetup.sh
+NetworkRPiClock_SOURCES = NetworkRPiClock.cc
+NetworkRPiClock_LDADD = src/librpinetclock.a \
+        $(CAIRO_LIBS) $(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS) \
+        $(ALSA_LIBS) \
+        restclient-cpp/.libs/librestclient-cpp.a
+
 man_MANS = man/man8/NetworkRPiClock.8
 noinst_DATA = html/index.html
 pkgdata_DATA = UserMan.pdf
 man8dir = $(mandir)/man8
-NetworkRPiClock_SOURCES = NetworkRPiClock.cc
-NetworkRPiClock_LDADD = src/librpinetclock.a \
-        $(CAIRO_LIBS) $(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS) $(ALSA_LIBS) \
-        restclient-cpp/.libs/librestclient-cpp.a
+Libtest_SOURCES = Libtest.cc
+Libtest_LDADD = src/librpinetclock.a $(CAIRO_LIBS) \
+	$(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS)
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -579,6 +589,19 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+clean-noinstPROGRAMS:
+	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+
+Libtest$(EXEEXT): $(Libtest_OBJECTS) $(Libtest_DEPENDENCIES) $(EXTRA_Libtest_DEPENDENCIES) 
+	@rm -f Libtest$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(Libtest_OBJECTS) $(Libtest_LDADD) $(LIBS)
+
 NetworkRPiClock$(EXEEXT): $(NetworkRPiClock_OBJECTS) $(NetworkRPiClock_DEPENDENCIES) $(EXTRA_NetworkRPiClock_DEPENDENCIES) 
 	@rm -f NetworkRPiClock$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(NetworkRPiClock_OBJECTS) $(NetworkRPiClock_LDADD) $(LIBS)
@@ -624,6 +647,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Libtest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NetworkRPiClock.Po@am__quote@
 
 .cc.o:
@@ -1055,7 +1079,7 @@ maintainer-clean-generic:
 clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool clean-local \
-	mostlyclean-am
+	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1136,19 +1160,20 @@ uninstall-man: uninstall-man8
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-binPROGRAMS \
-	clean-cscope clean-generic clean-libtool clean-local cscope \
-	cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
-	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man8 \
-	install-pdf install-pdf-am install-pkgdataDATA install-ps \
-	install-ps-am install-sbinSCRIPTS install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
+	clean-cscope clean-generic clean-libtool clean-local \
+	clean-noinstPROGRAMS cscope cscopelist-am ctags ctags-am dist \
+	dist-all dist-bzip2 dist-gzip dist-lzip dist-shar dist-tarZ \
+	dist-xz dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-libtool \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am \
+	install-data-hook install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man8 install-pdf \
+	install-pdf-am install-pkgdataDATA install-ps install-ps-am \
+	install-sbinSCRIPTS install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS \

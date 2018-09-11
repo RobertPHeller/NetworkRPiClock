@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Sep 5 15:29:32 2017
-#  Last Modified : <170910.0905>
+#  Last Modified : <180911.1127>
 #
 #  Description	
 #
@@ -55,17 +55,22 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src -I. -I./src \
 	
 sbin_SCRIPTS  = GPIOReset.sh  GPIOSetup.sh
 bin_PROGRAMS = NetworkRPiClock
+NetworkRPiClock_SOURCES = NetworkRPiClock.cc
+NetworkRPiClock_LDADD = src/librpinetclock.a \
+        $(CAIRO_LIBS) $(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS) \
+        $(ALSA_LIBS) \
+        restclient-cpp/.libs/librestclient-cpp.a
+
 man_MANS = man/man8/NetworkRPiClock.8
 pkgdatadir = $(datadir)/$(PACKAGE)/Doc
 noinst_DATA=html/index.html
 pkgdata_DATA = UserMan.pdf
 man8dir = $(mandir)/man8
 
-
-NetworkRPiClock_SOURCES = NetworkRPiClock.cc
-NetworkRPiClock_LDADD = src/librpinetclock.a \
-        $(CAIRO_LIBS) $(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS) $(ALSA_LIBS) \
-        restclient-cpp/.libs/librestclient-cpp.a
+noinst_PROGRAMS = Libtest
+Libtest_SOURCES = Libtest.cc
+Libtest_LDADD = src/librpinetclock.a $(CAIRO_LIBS) \
+	$(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS)
 
 src/librpinetclock.a: FORCE
 	$(MAKE) -C src librpinetclock.a
