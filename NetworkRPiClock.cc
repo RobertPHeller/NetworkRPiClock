@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <180908.0953>
+//  Last Modified : <181001.0729>
 //
 //  Description	
 //
@@ -320,21 +320,24 @@ int main(int argc, char *argv[]) {
     OLed.clear();
     time(&now);
     localtime_r(&now,&tm_now);
-    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker);
+    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker,
+                         ((tm_now.tm_sec & 1) == 0));
     OLed.WriteDisplay(display);
     std::cerr << tm_now.tm_mon+1 << "/" << tm_now.tm_mday << "/" << (tm_now.tm_year+1900) << " " << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << " NetworkRPiClock Started." << std::endl;
     while (true) {
         time(&now);
         localtime_r(&now,&tm_now);
+        if (!havevaliditem) mode = DisplayClock;
+        if (mode == DisplayClock) {
+            clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,
+                                 MuteSpeaker,
+                                 ((tm_now.tm_sec & 1) == 0));
+        } else {
+            curitem->DisplayDate(display);
+        }
+        OLed.WriteDisplay(display);
         if (tm_now.tm_sec == 0) {
             std::cerr << tm_now.tm_mon+1 << "/" << tm_now.tm_mday << "/" << (tm_now.tm_year+1900) << " " << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << " NetworkRPiClock Heartbeat." << std::endl;
-            if (!havevaliditem) mode = DisplayClock;
-            if (mode == DisplayClock) {
-                clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker);
-            } else {
-                curitem->DisplayDate(display);
-            }
-            OLed.WriteDisplay(display);
             //PrintDisplay(display);
             //std::cout << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << std::endl;
             if ((tm_now.tm_min % 5) == 0) {
@@ -447,7 +450,9 @@ int main(int argc, char *argv[]) {
             }
             if (update) {
                 if (mode == DisplayClock) {
-                    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,MuteSpeaker);
+                    clockdpy.DisplayTime(tm_now.tm_hour,tm_now.tm_min,
+                                         MuteSpeaker,
+                                         ((tm_now.tm_sec & 1) == 0));
                 } else {
                     curitem->DisplayDate(display);
                 }

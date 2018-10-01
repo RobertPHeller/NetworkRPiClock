@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Thu Sep 7 10:23:25 2017
-//  Last Modified : <171008.0841>
+//  Last Modified : <181001.0720>
 //
 //  Description	
 //
@@ -71,7 +71,7 @@ digitBitmapMap ClockDisplay::digitBitmaps[] = {
 
 
 
-void ClockDisplay::DisplayTime(int hours, int minutes, bool muteflag) {
+void ClockDisplay::DisplayTime(int hours, int minutes, bool muteflag, bool colonflag) {
     // Computer each of the digits.
     int hHigh = hours / 10;
     int hLow  = hours % 10;
@@ -93,7 +93,7 @@ void ClockDisplay::DisplayTime(int hours, int minutes, bool muteflag) {
     // Display low hour digit.
     drawdigit(hLow,32);
     // Display the colon.
-    drawcolon();
+    if (colonflag) drawcolon();
     // Display high minute digit.
     drawdigit(mHigh,64);
     // Display low minute digit.

@@ -1,4 +1,4 @@
-AC_INIT([NetworkRPiClock], [1.2.2])
+AC_INIT([NetworkRPiClock], [1.2.3])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 AC_SUBST(target)

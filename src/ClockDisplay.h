@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Thu Sep 7 10:17:48 2017
-//  Last Modified : <171008.0841>
+//  Last Modified : <181001.0719>
 //
 //  Description	
 //
@@ -119,7 +119,7 @@ public:
      * @param hours The hours to display.
      * @param minutes The minutes to display.
      */
-    void DisplayTime(int hours, int minutes, bool muteflag);
+    void DisplayTime(int hours, int minutes, bool muteflag, bool colonflag);
 };
 
 #endif // __CLOCKDISPLAY_H
