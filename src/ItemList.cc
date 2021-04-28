@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Sep 6 12:25:33 2017
-//  Last Modified : <180911.1142>
+//  Last Modified : <210427.2143>
 //
 //  Description	
 //
@@ -136,7 +136,12 @@ void ItemList::processAndAddItem(xmlNode *node) {
                 sscanf((const char *)GetText(child),"%02d:%02d",&newdate.starthour,&newdate.startminute);
                 // Else if the element is the text element, extract the text.
             } else if (strcasecmp((const char *)child->name,"text") == 0) {
-                newdate.text = (const char *)GetText(child);
+                const char * t = (const char *)GetText(child);
+                if (t) {
+                    newdate.text = t;
+                } else {
+                    newdate.text = "";
+                }
             }
         }
     }
