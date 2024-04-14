@@ -20,8 +20,9 @@ fi
 dnl SOUNDLIB=${datadir}/${PACKAGE}/sounds dnl This does not work.
 SOUNDLIB=${prefix}/share/${PACKAGE}/sounds
 AC_DEFINE_UNQUOTED([SOUNDLIB],"$SOUNDLIB",[The location of the sounds])
-AC_DEFINE([BASEURL],["http://sauron.deepsoft.com:8080/"],[The default baseURL])
-                
+#AC_DEFINE([BASEURL],["http://sauron.deepsoft.com:8080/"],[The default baseURL])
+AC_PATH_PROG(GCALCLI,gcalcli)
+AC_DEFINE_UNQUOTED([GCALCLIPROG],"$GCALCLI",[Google Calendar CLI program])                
 BUILD_DIR=`pwd`
 TOP_DIR=${BUILD_DIR}
 

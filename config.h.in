@@ -1,7 +1,7 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* The default baseURL */
-#undef BASEURL
+/* Google Calendar CLI program */
+#undef GCALCLIPROG
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <181027.1011>
+//  Last Modified : <240414.1842>
 //
 //  Description	
 //
@@ -59,7 +59,6 @@ static const char rcsid[] = "@(#) : $Id$";
 #include <cairo.h>
 
 #include "GetOptions.h"
-#include "restclient-cpp/restclient.h"
 #include "ItemList.h"
 #include "Sounds.h"
 #include "ClockDisplay.h"
@@ -336,7 +335,7 @@ int main(int argc, char *argv[]) {
             curitem->DisplayDate(display);
         }
         OLed.WriteDisplay(display);
-        if (tm_now.tm_sec == 0) {
+        if (tm_now.tm_sec == 0 && false) {
             std::cerr << tm_now.tm_mon+1 << "/" << tm_now.tm_mday << "/" << (tm_now.tm_year+1900) << " " << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << " NetworkRPiClock Heartbeat." << std::endl;
             //PrintDisplay(display);
             //std::cout << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << std::endl;
