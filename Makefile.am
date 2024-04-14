@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Sep 5 15:29:32 2017
-#  Last Modified : <180911.1127>
+#  Last Modified : <240414.1845>
 #
 #  Description	
 #
@@ -44,13 +44,12 @@
 
 
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src sounds restclient-cpp
+SUBDIRS = src sounds
 
 EXTRA_DIST = bootstrap Doxyfile.in LightSensor.png GPIOReset.sh  GPIOSetup.sh
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src -I. -I./src \
 	$(CAIRO_CFLAGS) $(PANGO_CAIRO_CFLAGS) $(LIBXML2_CFLAGS) \
-	-I$(top_srcdir)/restclient-cpp/include -I./restclient-cpp/include \
 	$(ALSA_CFLAGS)
 	
 sbin_SCRIPTS  = GPIOReset.sh  GPIOSetup.sh
@@ -58,8 +57,7 @@ bin_PROGRAMS = NetworkRPiClock
 NetworkRPiClock_SOURCES = NetworkRPiClock.cc
 NetworkRPiClock_LDADD = src/librpinetclock.a \
         $(CAIRO_LIBS) $(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS) \
-        $(ALSA_LIBS) \
-        restclient-cpp/.libs/librestclient-cpp.a
+        $(ALSA_LIBS)
 
 man_MANS = man/man8/NetworkRPiClock.8
 pkgdatadir = $(datadir)/$(PACKAGE)/Doc
@@ -74,9 +72,6 @@ Libtest_LDADD = src/librpinetclock.a $(CAIRO_LIBS) \
 
 src/librpinetclock.a: FORCE
 	$(MAKE) -C src librpinetclock.a
-
-restclient-cpp/.libs/librestclient-cpp.a : FORCE
-	$(MAKE) -C restclient-cpp librestclient-cpp.la
 
 FORCE:
 

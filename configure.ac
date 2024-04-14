@@ -7,9 +7,6 @@ AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE
 LT_INIT
 
-AC_CONFIG_SUBDIRS([restclient-cpp])
-
-
 AC_CONFIG_MACRO_DIR([m4])
 if test "x${prefix}" = "xNONE"; then
     prefix=/usr/local
