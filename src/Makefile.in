@@ -23,7 +23,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Sep 5 16:03:44 2017
-#  Last Modified : <170910.1038>
+#  Last Modified : <240414.1939>
 #
 #  Description	
 #
@@ -156,7 +156,8 @@ librpinetclock_a_LIBADD =
 am__objects_1 =
 am_librpinetclock_a_OBJECTS = $(am__objects_1) GetOptions.$(OBJEXT) \
 	ItemList.$(OBJEXT) Sounds.$(OBJEXT) ClockDisplay.$(OBJEXT) \
-	Button.$(OBJEXT) LightSensor.$(OBJEXT) SSD1306.$(OBJEXT)
+	Button.$(OBJEXT) LightSensor.$(OBJEXT) SSD1306.$(OBJEXT) \
+	GCalCli.$(OBJEXT)
 librpinetclock_a_OBJECTS = $(am_librpinetclock_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -174,9 +175,10 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/Button.Po \
-	./$(DEPDIR)/ClockDisplay.Po ./$(DEPDIR)/GetOptions.Po \
-	./$(DEPDIR)/ItemList.Po ./$(DEPDIR)/LightSensor.Po \
-	./$(DEPDIR)/SSD1306.Po ./$(DEPDIR)/Sounds.Po
+	./$(DEPDIR)/ClockDisplay.Po ./$(DEPDIR)/GCalCli.Po \
+	./$(DEPDIR)/GetOptions.Po ./$(DEPDIR)/ItemList.Po \
+	./$(DEPDIR)/LightSensor.Po ./$(DEPDIR)/SSD1306.Po \
+	./$(DEPDIR)/Sounds.Po
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
@@ -415,7 +417,6 @@ runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-subdirs = @subdirs@
 sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
@@ -428,12 +429,12 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = Doxyfile.in
 noinst_LIBRARIES = librpinetclock.a
 HEADERFILES = GetOptions.h ItemList.h Sounds.h ClockDisplay.h Button.h \
-		LightSensor.h SSD1306.h
+		LightSensor.h SSD1306.h GCalCli.h
 
 librpinetclock_a_SOURCES = $(HEADERFILES) GetOptions.cc ItemList.cc Sounds.cc \
 		ClockDisplay.cc _0.xbm _1.xbm _2.xbm _3.xbm _4.xbm _5.xbm \
 		_6.xbm _7.xbm _8.xbm _9.xbm colon.xbm Button.cc LightSensor.cc \
-		SSD1306.cc
+		SSD1306.cc GCalCli.cc
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src -I. -I./src \
 	$(CAIRO_CFLAGS) $(PANGO_CAIRO_CFLAGS) $(LIBXML2_CFLAGS) $(ALSA_CFLAGS)
@@ -493,6 +494,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Button.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ClockDisplay.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GCalCli.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GetOptions.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ItemList.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LightSensor.Po@am__quote@ # am--include-marker
@@ -683,6 +685,7 @@ clean-am: clean-generic clean-libtool clean-local \
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/Button.Po
 	-rm -f ./$(DEPDIR)/ClockDisplay.Po
+	-rm -f ./$(DEPDIR)/GCalCli.Po
 	-rm -f ./$(DEPDIR)/GetOptions.Po
 	-rm -f ./$(DEPDIR)/ItemList.Po
 	-rm -f ./$(DEPDIR)/LightSensor.Po
@@ -736,6 +739,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/Button.Po
 	-rm -f ./$(DEPDIR)/ClockDisplay.Po
+	-rm -f ./$(DEPDIR)/GCalCli.Po
 	-rm -f ./$(DEPDIR)/GetOptions.Po
 	-rm -f ./$(DEPDIR)/ItemList.Po
 	-rm -f ./$(DEPDIR)/LightSensor.Po

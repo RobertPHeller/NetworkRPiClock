@@ -23,7 +23,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Sep 5 15:29:32 2017
-#  Last Modified : <180911.1127>
+#  Last Modified : <240414.1845>
 #
 #  Description	
 #
@@ -167,8 +167,7 @@ am_NetworkRPiClock_OBJECTS = NetworkRPiClock.$(OBJEXT)
 NetworkRPiClock_OBJECTS = $(am_NetworkRPiClock_OBJECTS)
 NetworkRPiClock_DEPENDENCIES = src/librpinetclock.a \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	restclient-cpp/.libs/librestclient-cpp.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -468,7 +467,6 @@ runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-subdirs = @subdirs@
 sysconfdir = @sysconfdir@
 target = @target@
 target_alias = @target_alias@
@@ -479,19 +477,17 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = src sounds restclient-cpp
+SUBDIRS = src sounds
 EXTRA_DIST = bootstrap Doxyfile.in LightSensor.png GPIOReset.sh  GPIOSetup.sh
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src -I. -I./src \
 	$(CAIRO_CFLAGS) $(PANGO_CAIRO_CFLAGS) $(LIBXML2_CFLAGS) \
-	-I$(top_srcdir)/restclient-cpp/include -I./restclient-cpp/include \
 	$(ALSA_CFLAGS)
 
 sbin_SCRIPTS = GPIOReset.sh  GPIOSetup.sh
 NetworkRPiClock_SOURCES = NetworkRPiClock.cc
 NetworkRPiClock_LDADD = src/librpinetclock.a \
         $(CAIRO_LIBS) $(PANGO_CAIRO_LIBS) $(LIBXML2_LIBS) \
-        $(ALSA_LIBS) \
-        restclient-cpp/.libs/librestclient-cpp.a
+        $(ALSA_LIBS)
 
 man_MANS = man/man8/NetworkRPiClock.8
 noinst_DATA = html/index.html
@@ -1219,9 +1215,6 @@ uninstall-man: uninstall-man8
 
 src/librpinetclock.a: FORCE
 	$(MAKE) -C src librpinetclock.a
-
-restclient-cpp/.libs/librestclient-cpp.a : FORCE
-	$(MAKE) -C restclient-cpp librestclient-cpp.la
 
 FORCE:
 

@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Sep 5 16:03:44 2017
-#  Last Modified : <170910.1038>
+#  Last Modified : <240414.1939>
 #
 #  Description	
 #
@@ -46,11 +46,11 @@ EXTRA_DIST = Doxyfile.in
 
 noinst_LIBRARIES = librpinetclock.a
 HEADERFILES = GetOptions.h ItemList.h Sounds.h ClockDisplay.h Button.h \
-		LightSensor.h SSD1306.h
+		LightSensor.h SSD1306.h GCalCli.h
 librpinetclock_a_SOURCES = $(HEADERFILES) GetOptions.cc ItemList.cc Sounds.cc \
 		ClockDisplay.cc _0.xbm _1.xbm _2.xbm _3.xbm _4.xbm _5.xbm \
 		_6.xbm _7.xbm _8.xbm _9.xbm colon.xbm Button.cc LightSensor.cc \
-		SSD1306.cc
+		SSD1306.cc GCalCli.cc
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/src -I. -I./src \
 	$(CAIRO_CFLAGS) $(PANGO_CAIRO_CFLAGS) $(LIBXML2_CFLAGS) $(ALSA_CFLAGS)
 

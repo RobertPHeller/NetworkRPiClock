@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 17:14:44 2017
-//  Last Modified : <180908.0823>
+//  Last Modified : <240414.1847>
 //
 //  Description	
 //
@@ -71,7 +71,6 @@
  * 
  * - --background, -b  Run the program as a daemon and fade into the background.
  * - --soundlib, -s    The directory where the sound WAV files are.
- * - --url, -u         The base URL to use.
  * - --days, -d        The number of days of advanced notice (default: 1).
  * - --help, -h        Display this help.
  * 
@@ -85,8 +84,6 @@ private:
     static const char optstring[];
     /** The days option value. */
     int days;
-    /** The base URL option value. */
-    std::string baseURL;
     /** The sound library option value. */
     std::string soundLib;
     /** The help option value. */
@@ -107,10 +104,6 @@ public:
     GetOptions(int argc, char * const argv[]); 
     /** The destructor is a noop. */
     ~GetOptions() {}
-    /** Method to return the base URL option.
-     * @returns the base URL option value.
-     */
-    const std::string BaseURL() const {return baseURL;}
     /** Method to return the days option.
      * @returns the days option value.
      */

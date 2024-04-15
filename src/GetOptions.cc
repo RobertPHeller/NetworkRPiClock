@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 17:16:49 2017
-//  Last Modified : <170912.1256>
+//  Last Modified : <240414.1848>
 //
 //  Description	
 //
@@ -74,7 +74,6 @@ static const char rcsid[] = "@(#) : $Id$";
 const struct option GetOptions::longoptions[] = {
     {"background",no_argument, 0, 'b'},
     {"soundlib", required_argument, 0, 's'},
-    {"url", required_argument, 0, 'u'},
     {"days", required_argument, 0, 'd'},
     {"help",no_argument, 0, 'h'},
     {0,0,0,0}   
@@ -89,7 +88,6 @@ GetOptions::GetOptions(int argc, char * const argv[]) {
     opterr = 0;
     
     // Initialize the options to their default values.
-    baseURL = BASEURL;   // Defined in config.h from configure.ac
     soundLib = SOUNDLIB; // Defined in config.h from configure.ac
     background = false;
     days = 1;
@@ -112,9 +110,6 @@ GetOptions::GetOptions(int argc, char * const argv[]) {
             break;
         case 's': // --soundlib, -s
             soundLib = optarg;
-            break;
-        case 'u':  // --url, -u
-            baseURL = optarg;
             break;
         case 'd': // --days, -d
             days = atoi(optarg);
@@ -160,7 +155,6 @@ void GetOptions::Usage(const char *program) const {
     std::cerr << "Where: " << std::endl;
     std::cerr << "    --background, -b  Fade into the background: fork() and close channels 0, 1, 2, and disconnect from the controlling tty (if any)." << std::endl;
     std::cerr << "    --soundlib, -s    The directory where the sound WAV files are." << std::endl;
-    std::cerr << "    --url, -u         The base URL to use." << std::endl;
     std::cerr << "    --days, -d        The number of days of advanced notice (default: 1)." << std::endl;
     std::cerr << "    --help, -h        Display this help." << std::endl;
     std::cerr << std::endl;

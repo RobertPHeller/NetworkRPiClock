@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <240414.1842>
+//  Last Modified : <240414.2047>
 //
 //  Description	
 //
@@ -60,6 +60,7 @@ static const char rcsid[] = "@(#) : $Id$";
 
 #include "GetOptions.h"
 #include "ItemList.h"
+#include "GCalCli.h"
 #include "Sounds.h"
 #include "ClockDisplay.h"
 #include "Button.h"
@@ -127,7 +128,7 @@ static const char rcsid[] = "@(#) : $Id$";
  * @page NetworkRPiClock Deamon program (NetworkRPiClock).
  * @section SYNOPSIS SYNOPSIS
  * 
- * NetworkRPiClock [--days, -d value] [--help, -h] [--url, -u URL] [--soundlib, -s path]
+ * NetworkRPiClock [--days, -d value] [--help, -h] [--soundlib, -s path]
  * 
  * @section DESCRIPTION DESCRIPTION
  * 
@@ -302,11 +303,6 @@ int main(int argc, char *argv[]) {
     LightSensor Light;
     enum {DisplayClock, DisplayItem} mode;
 
-    std::string URL = ProgramOptions.BaseURL();
-    URL += "?days=";
-    snprintf(buffer,sizeof(buffer),"%d",ProgramOptions.Days());
-    URL += buffer;
-    //std::cerr << "*** main(): URL is "<<URL<<std::endl;
     ItemList *iList = NULL;
     DateVector AckedDates;
     DateVector::const_iterator curitem;
@@ -335,22 +331,22 @@ int main(int argc, char *argv[]) {
             curitem->DisplayDate(display);
         }
         OLed.WriteDisplay(display);
-        if (tm_now.tm_sec == 0 && false) {
+        if (tm_now.tm_sec == 0 /*&& false*/) {
             std::cerr << tm_now.tm_mon+1 << "/" << tm_now.tm_mday << "/" << (tm_now.tm_year+1900) << " " << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << " NetworkRPiClock Heartbeat." << std::endl;
             //PrintDisplay(display);
             //std::cout << std::setfill('0') << std::setw(2) << tm_now.tm_hour << ":" << std::setfill('0') << std::setw(2) << tm_now.tm_min << std::endl;
             if ((tm_now.tm_min % 5) == 0) {
                 if (tm_now.tm_min == 0) FlushOldDates(&tm_now,AckedDates);
                 std::cerr << "*** main(): Top of 5 min loop, after FlushOldDates(): AckedDates now has " << AckedDates.size() << " items" << std::endl;
-                RestClient::Response r = RestClient::get(URL);
-                std::cerr << "*** main(), r.code == " << r.code << std::endl;
-                if (r.code == 200) {
+                GCalCli::Agenda a(&tm_now,ProgramOptions.Days());
+                std::cerr << "*** main(), a == " << (bool)a << std::endl;
+                if (a) {
                     if (iList != NULL) {
                         delete iList;
                         iList = NULL;
                     }
                     //std::cerr << "*** main(), r.body == '"<< r.body << "'" << std::endl;
-                    iList = new ItemList(r.body);
+                    iList = new ItemList(a.Body());
                     std::cerr << "*** main(): iList has " << iList->ItemCount() << " items" << std::endl;
                     havevaliditem = false;
                     if (Light.DaytimeP() && !MuteSpeaker) {
