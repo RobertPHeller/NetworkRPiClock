@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Apr 14 19:39:44 2024
-//  Last Modified : <240414.2044>
+//  Last Modified : <240518.0902>
 //
 //  Description	
 //
@@ -71,7 +71,7 @@ Agenda::Agenda(const struct tm *starttime, int days)
     char buffer[256];
     
     std::string cmd = GCALCLIPROG;
-    cmd += " --nocolor agenda --military --nostarted --tsv ";
+    cmd += "--noauth_local_webserver --nocolor agenda --military --nostarted --tsv ";
     snprintf(buffer,sizeof(buffer),"-w %d %d/%d/%d:%02d:%02d +%dd",
              sizeof(buffer) - 5,
              starttime->tm_mon+1,starttime->tm_mday,
@@ -80,6 +80,7 @@ Agenda::Agenda(const struct tm *starttime, int days)
     cmd += buffer;
     FILE *pipe = popen(cmd.c_str(),"r");
     if (pipe == NULL) {
+        std::cerr << "*** Agenda: popen failed, errno is " << errno << std::endl;
         status_ = false;
         return;
     }
@@ -120,6 +121,7 @@ Agenda::Agenda(const struct tm *starttime, int days)
     body_ += "</calendar>\n";
     std::cerr << "*** Agenda: body_ is |" << body_ << "|" << std::endl;
     if (pclose(pipe) < 0) {
+        std::cerr << "*** Agenda: pclose failed, errno is " << errno << std::endl;
         status_ = false;
     } else {
         status_ = true;
