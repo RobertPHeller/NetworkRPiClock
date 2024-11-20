@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Sep 5 16:57:58 2017
-//  Last Modified : <240414.2047>
+//  Last Modified : <241119.2144>
 //
 //  Description	
 //
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
     time_t now;
     struct tm tm_now;
     char buffer[256];
-    bool MuteSpeaker = true;
+    bool MuteSpeaker = false;
     
     
     const struct timespec nsleep = {0,100000000};
@@ -291,8 +291,11 @@ int main(int argc, char *argv[]) {
     
     AlertSound::InitializeAlertSoundFileMap(ProgramOptions.SoundLib());
     AlertSound todotoday(ToDoToday);
+    todotoday.Play();
     AlertSound eventtoday(EventToDay);
+    eventtoday.Play();
     AlertSound eventsoon(EventSoon);
+    eventsoon.Play();
     Button Left(L_pin);
     Button Right(R_pin);
     Button Center(C_pin);
