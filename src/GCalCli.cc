@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Apr 14 19:39:44 2024
-//  Last Modified : <240518.0902>
+//  Last Modified : <241120.1656>
 //
 //  Description	
 //
@@ -71,7 +71,7 @@ Agenda::Agenda(const struct tm *starttime, int days)
     char buffer[256];
     
     std::string cmd = GCALCLIPROG;
-    cmd += "--noauth_local_webserver --nocolor agenda --military --nostarted --tsv ";
+    cmd += " --noauth_local_webserver --nocolor agenda --military --nostarted --tsv ";
     snprintf(buffer,sizeof(buffer),"-w %d %d/%d/%d:%02d:%02d +%dd",
              sizeof(buffer) - 5,
              starttime->tm_mon+1,starttime->tm_mday,
